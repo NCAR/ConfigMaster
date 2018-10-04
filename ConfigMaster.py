@@ -3,6 +3,7 @@
 import os
 import sys
 import types
+import importlib
 
 import argparse
 
@@ -30,15 +31,21 @@ class ConfigMaster:
   defaultParams = ""
   #optionsToIgnore = ['dt', 'os']
   parser = None
+  
+
+  configFilePath = None
 
   def setDefaultParams(self, dp):
-    self.defaultParams = self.defaultParamsHeader + dp
+    if dp.lstrip()[0:2] == "#!":
+      self.defaultParams = dp
+    else:
+      self.defaultParams = self.defaultParamsHeader + dp
 
   def printParams(self):
     for o in self.opt:
       #if o not in self.optionsToIgnore:
         #if type(self.opt[o]) != types.ModuleType:
-          print o + ": " + str(self.opt[o])
+          print(o + ": " + str(self.opt[o]))
         #    print self.opt
 
   def assignParameters(self,p):
@@ -46,21 +53,24 @@ class ConfigMaster:
     self.opt = p
 
   def printDefaultParams(self):
-    print self.defaultParams
+    print(self.defaultParams)
 
   def assignDefaultParams(self):
 #    global defaultParams
 #    self.defaultParams = dp
-    exec self.defaultParams in self.opt
+    exec(self.defaultParams, self.opt)
     del self.opt['__builtins__']
-    for ko in self.opt.keys():
+    for ko in list(self.opt.keys()):
       if type(self.opt[ko]) == types.ModuleType:
         del self.opt[ko]    
 
   
-
+  def getConfigFilePath(self):
+    return self.configFilePath
+        
   # config file path
   def handleConfigFile(self,cfp):
+    self.configFilePath = cfp
     config_path, config_file = os.path.split(cfp)
 
     if config_file[-3:] == ".py":
@@ -70,7 +80,8 @@ class ConfigMaster:
       sys.path.append(config_path)
 
     #print "importing config file: {}".format(config_file)
-    cf = __import__(config_file, globals(), locals(), [])
+    #cf = __import__(config_file, globals(), locals(), [])
+    cf = importlib.import_module(config_file)
     for o in self.opt:
       #print "looking at {}".format(o)
       if o in dir(cf):
@@ -81,12 +92,12 @@ class ConfigMaster:
     for cfo in dcf:
       #cfo = dcf[kcfo]
       #print cfo,type(cf.__dict__[cfo])      
-      if cfo in ["__builtins__","__doc__","__file__","__name__","__package__"]:
+      if cfo.startswith("__"):# 
         continue
       if type(cf.__dict__[cfo]) == types.ModuleType:
         continue
       if cfo not in self.opt:
-        print "\nERROR: Invalid parameter in configuration file {}: {}\n".format(cfp,cfo)
+        print("\nERROR: Invalid parameter in configuration file {}: {}\n".format(cfp,cfo))
         exit(1)
     
 
@@ -94,7 +105,7 @@ class ConfigMaster:
   def init(self, program_description=None, **kwargs):
     self.assignDefaultParams()
 
-    self.parser = argparse.ArgumentParser(description=program_description)
+    self.parser = argparse.ArgumentParser(description=program_description, formatter_class=argparse.RawDescriptionHelpFormatter)
 
     if "add_param_args" in kwargs:
       self.addParseArgs(add_param_args = kwargs["add_param_args"])
@@ -146,7 +157,7 @@ class ConfigMaster:
         action = "store_false"
         helpString = "Set " + o + " to False"
         bool_parser.add_argument(argument, action=action, help=helpString, default=None)
-      elif isinstance(self.opt[o], (int,long,float,str)):
+      elif isinstance(self.opt[o], (int,float,str)):
         #print "working on {}".format(o)
         argument = "--" + o
         helpString = "Overide the param file value of " + o
