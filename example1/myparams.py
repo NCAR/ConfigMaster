@@ -9,7 +9,8 @@
 debug = False
 
 # Forecast hour
-forecasthour = 10
+#forecasthour = 10
+forecastHour = 10
 
 # Email Address
 emailAddy = "prestop@ucar.edu"

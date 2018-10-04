@@ -18,8 +18,6 @@ debug = False
 # Forecast hour
 forecastHour = 3
 
-randomFloat = .3
-
 # Email Address
 emailAddy = "prestop@ucar.edu"
  

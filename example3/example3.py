@@ -11,11 +11,11 @@ def main():
     p.setDefaultParams(defaultParams)
     p.init(__doc__)
     
-    print "Using these parameters"
+    print("Using these parameters")
     p.printParams()
 
     if p.opt["debug"]:
-        print "\nDEBUG: Using forecast hour: {}".format(p.opt["forecastHour"])
+        print("\nDEBUG: Using forecast hour: {}".format(p.opt["forecastHour"]))
 
 
 

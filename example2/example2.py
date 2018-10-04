@@ -6,7 +6,7 @@ def main():
     p = P.Params()
     p.init("A simple Example Program")
     
-    print "Using these parameters"
+    print("Using these parameters")
     p.printParams()
 
 
