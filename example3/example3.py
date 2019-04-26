@@ -9,7 +9,7 @@ from ConfigMaster import ConfigMaster
 def main():
     p = ConfigMaster()
     p.setDefaultParams(defaultParams)
-    p.init(__doc__)
+    p.init(__doc__, add_default_logging=False)
     
     print("Using these parameters")
     p.printParams()
