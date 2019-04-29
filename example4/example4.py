@@ -1,22 +1,24 @@
 #!/usr/bin/env python
 '''
-A simple script to show how ConfigMaster works.
+A simple script to show how ConfigMaster works with Logging integration.
 '''
 from ConfigMaster import ConfigMaster
 
+import logging
 
 
 def main():
     p = ConfigMaster()
     p.setDefaultParams(defaultParams)
-    p.init(__doc__, add_default_logging=False)
+    p.init(__doc__, add_default_logging=True)
+
+    logging.info(f"Using these parameters:")
+    for line in p.getParamsString().splitlines():
+        logging.info(f"\t{line}")
     
-    print("Using these parameters")
-    p.printParams()
-
-    if p.opt["debug"]:
-        print("\nDEBUG: Using forecast hour: {}".format(p.opt["forecastHour"]))
-
+    logging.info("info test")
+    logging.debug("debug test")
+    logging.warn("warn test")
 
 
 defaultParams = """
@@ -25,10 +27,6 @@ import datetime
 #####################################
 ## GENERAL CONFIGURATION
 #####################################
- 
-## debug ##
-# Flag to output debugging information
-debug = False
 
 # Forecast hour
 if datetime.datetime.now().hour % 2 == 0:

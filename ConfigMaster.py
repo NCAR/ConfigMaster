@@ -7,6 +7,13 @@ import importlib
 
 import argparse
 
+'''
+Version 1.2
+
+ChangeLog
+1.2 - Added automatic logging support
+'''
+
 # Create an Action subclass that prints the
 # default params for us without having to force the user to query the argparse
 # print_params by hand
@@ -25,6 +32,7 @@ def make_ConfigAction(cm):
   return CMCAction
 
 class ConfigMaster:
+  ''' This is the main dictionary that holds all the args '''
   opt = {}
 
   defaultParamsHeader = "#!/usr/bin/env python\n"
@@ -42,12 +50,14 @@ class ConfigMaster:
       self.defaultParams = self.defaultParamsHeader + dp
 
   def printParams(self):
+    print(f"{self.getParamsString()}")
+    
+  def getParamsString(self):
+    returnString=""
     for o in self.opt:
-      #if o not in self.optionsToIgnore:
-        #if type(self.opt[o]) != types.ModuleType:
-          print(o + ": " + str(self.opt[o]))
-        #    print self.opt
-
+      returnString += (o + " : " + str(self.opt[o]) + "\n")
+    return returnString
+        
   def assignParameters(self,p):
     global opt
     self.opt = p
@@ -101,23 +111,87 @@ class ConfigMaster:
         exit(1)
     
 
+  def init(self, program_description=None, add_param_args=True, add_default_logging=True, additional_args=[]):
+    '''
+    Parse command line arguments, and initialize parameter dictionary.
 
-  def init(self, program_description=None, **kwargs):
+    :param str program_description: Short description of the program function. __doc__ is a recommended value.
+    :param bool add_param_args: Automatically add command line arguments for configuration parameters
+    :param dict additional_args: A collection of dictionaries.  Look at createLogArguments() for an example of its structure.
+    '''
     self.assignDefaultParams()
 
     self.parser = argparse.ArgumentParser(description=program_description, formatter_class=argparse.RawDescriptionHelpFormatter)
 
-    if "add_param_args" in kwargs:
-      self.addParseArgs(add_param_args = kwargs["add_param_args"])
-    else:
-      self.addParseArgs()
+    # add possible arguments to the parser
+    self.addParseArgs(add_param_args=add_param_args, add_default_logging=add_default_logging,
+                        additional_args=additional_args)
 
+    # parse the cmd line and add to opt dictionary
     self.handleArgParse()
 
+    #print(self.opt)
+    if add_default_logging:
+      self.createDefaultLogger()
+
+  def createDefaultLogger(self):
+
+    import logging
+    # Add custom verbose logging level
+    logging.VERBOSE = 5
+    logging.addLevelName(logging.VERBOSE, "VERBOSE")
+    logging.Logger.verbose = lambda inst, msg, *args, **kwargs: inst.log(logging.VERBOSE, msg, *args, **kwargs)
+    logging.verbose = lambda msg, *args, **kwargs: logging.log(logging.VERBOSE, msg, *args, **kwargs)
+
+    numeric_level = getattr(logging, self.opt["debugLevel"].upper(), None)
+
+    # in theory should never get here, because argparse should restrict us to valid levels
+    if not isinstance(numeric_level, int):
+      raise ValueError('Invalid log level: %s' % self.opt["debugLevel"])
+  
+    if self.opt["logPath"] == "-":
+        print("Logging to stdout")
+        logging.basicConfig(format="[%(levelname)-8s] [%(asctime)s] -- %(message)s",
+                                level=numeric_level, datefmt='%Y%d%m %H:%M:%S', stream=sys.stdout)
+    else:
+        print(f"Logging to {self.opt['lPath']})")
+        logging.basicConfig(format="[[[%(levelname)-9s] [%(asctime)s] -- %(message)s",  level=numeric_level,
+                                datefmt='%Y%m%d %H:%M:%S', filename=self.opt["lPath"])
+                                                                                  
+    
+  def createLogArguments(self):
+
+    arglist = []
+
+    posargs = ["-d", "--debugLevel"]
+    namedargs = {
+      "choices": ["VERBOSE","DEBUG","INFO","WARNING","ERROR","CRITICAL"],
+      "help": "Control volume of log messages. (default: %(default)s)",
+      "default": "INFO"
+      }
+    arglist.append( (posargs, namedargs) )
+
+    posargs = ['-l','--logPath']
+    namedargs = {
+      "help":"The full path to the log file.  Use '-' to log to stdout.  (default: %(default)s)",
+      "default":"-"
+      }
+    arglist.append( (posargs, namedargs) )
+
+    return arglist
+
+  def addAdditionalArguments(self, arglist):
+    '''
+    Add arguments from arglist to the parser.
+    see createLogArguments() for an example of the structure of arglist
+    '''  
+    for (posargs, namedargs) in arglist:
+      self.parser.add_argument(*posargs, **namedargs)
 
   def handleArgParse(self):
     args = self.parser.parse_args()
 
+    '''
     for o in self.opt:
       #if o in self.optionsToIgnore:
       #  continue
@@ -125,15 +199,32 @@ class ConfigMaster:
         if getattr(args,o) != None:
           #print "seting {} to {} from command line".format(o,getattr(args,o))
           self.opt[o] = getattr(args,o)
+    '''
+    #print(f"{ vars(args).keys()}")
+    #print(f"{ self.opt}")
+    for o in vars(args).keys():
+      if getattr(args,o) != None:
+        #print(f"seting {o} to {getattr(args,o)} from command line")
+        self.opt[o] = getattr(args,o)
+    
 
-  def addParseArgs(self, add_param_args=True):
+  def addParseArgs(self, add_param_args=True, add_default_logging=True, additional_args=[]):
     #parser.add_argument('-c','--config', help="The configuration file.")
     self.parser.add_argument('-c', '--config', help="The configuration file.", action=make_ConfigAction(self))
     self.parser.add_argument('-p', '--print_params', action=make_PrintParamsAction(self.defaultParams),
                         nargs=0, help="Generate a default configuration file.")
 
+    argslist = []
+    if add_default_logging:
+      argslist = self.createLogArguments()
+
+    argslist += additional_args
+    
+    self.addAdditionalArguments(argslist)
+
     if add_param_args:
       self.addAdvancedParseArgs()
+
 
     
   def addAdvancedParseArgs(self):
