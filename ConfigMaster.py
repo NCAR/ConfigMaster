@@ -7,6 +7,12 @@ import importlib
 
 import argparse
 
+'''
+Version 1.2
+
+ChangeLog
+1.2 - Added automatic logging support
+'''
 
 # Create an Action subclass that prints the
 # default params for us without having to force the user to query the argparse
