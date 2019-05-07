@@ -5,6 +5,7 @@ A simple script to show how ConfigMaster works with Logging integration.
 from ConfigMaster import ConfigMaster
 
 import logging
+logging.captureWarnings(True)
 
 
 def main():
@@ -18,7 +19,7 @@ def main():
     
     logging.info("info test")
     logging.debug("debug test")
-    logging.warn("warn test")
+    logging.warning("warn test")
 
 
 defaultParams = """
