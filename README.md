@@ -90,8 +90,7 @@ emailAddy = "prestop@ucar.edu"
 
 dataDir = os.path.join(os.environ["HOME"],"data")
 
-logFile = os.path.join(dataDir,"logs",datetime.datetime.now().strftime("%Y%m%d") + ".log")
- 
+outFile = os.path.join(dataDir,"output",datetime.datetime.now().strftime("%Y%m%d") + ".out")
 """
 
 
@@ -106,8 +105,8 @@ $ ./example4/example4.py -h
 usage: example4.py [-h] [-c CONFIG] [-p]
                    [-d {VERBOSE,DEBUG,INFO,WARNING,ERROR,CRITICAL}]
                    [-l LOGPATH] [--forecastHour FORECASTHOUR]
-                   [--emailAddy EMAILADDY] [--dataDir DATADIR]
-                   [--logFile LOGFILE]
+                   [--emailAddress EMAILADDRESS] [--dataDir DATADIR]
+                   [--outFile OUTFILE]
 
 A simple script to show how ConfigMaster works with Logging integration.
 
@@ -123,25 +122,28 @@ optional arguments:
                         stdout. (default: -)
   --forecastHour FORECASTHOUR
                         Overide the param file value of forecastHour
-  --emailAddy EMAILADDY
-                        Overide the param file value of emailAddy
+  --emailAddress EMAILADDRESS
+                        Overide the param file value of emailAddress
   --dataDir DATADIR     Overide the param file value of dataDir
-  --logFile LOGFILE     Overide the param file value of logFile
+  --outFile OUTFILE     Overide the param file value of outFile
 ```
 
 Here is what example4 looks like when run:
 ```
 $ ./example4/example4.py
 Logging to stdout
-[INFO    ] [20190705 09:13:41] -- Using these parameters:
-[INFO    ] [20190705 09:13:41] -- 	forecastHour : 3
-[INFO    ] [20190705 09:13:41] -- 	emailAddy : prestop@ucar.edu
-[INFO    ] [20190705 09:13:41] -- 	dataDir : /home/prestop/data
-[INFO    ] [20190705 09:13:41] -- 	logFile : /home/prestop/data/logs/20190507.log
-[INFO    ] [20190705 09:13:41] -- 	debugLevel : INFO
-[INFO    ] [20190705 09:13:41] -- 	logPath : -
-[INFO    ] [20190705 09:13:41] -- info test
-[WARNING ] [20190705 09:13:41] -- warn test
+[INFO    ] [20190905 14:30:15] -- Using these parameters:
+[INFO    ] [20190905 14:30:15] -- 	forecastHour : 4
+[INFO    ] [20190905 14:30:15] -- 	emailAddress : prestop@ucar.edu
+[INFO    ] [20190905 14:30:15] -- 	dataDir : /home/prestop/data
+[INFO    ] [20190905 14:30:15] -- 	outFile : /home/prestop/data/output/20190509.out
+[INFO    ] [20190905 14:30:15] -- 	debugLevel : INFO
+[INFO    ] [20190905 14:30:15] -- 	logPath : -
+[INFO    ] [20190905 14:30:15] -- info test
+[WARNING ] [20190905 14:30:15] -- ./example4.py:25: DeprecationWarning: The 'warn' function is deprecated, use 'warning' instead
+  logging.warn("warn test")
+
+[WARNING ] [20190905 14:30:15] -- warn test
 ```
 
 # Additional documentation
