@@ -167,7 +167,8 @@ class ConfigMaster:
     namedargs = {
       "choices": ["VERBOSE","DEBUG","INFO","WARNING","ERROR","CRITICAL"],
       "help": "Control volume of log messages. (default: %(default)s)",
-      "default": "INFO"
+      "default": "INFO",
+      "type": str.upper
       }
     arglist.append( (posargs, namedargs) )
 
