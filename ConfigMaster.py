@@ -154,9 +154,9 @@ class ConfigMaster:
         logging.basicConfig(format="[%(levelname)-8s] [%(asctime)s] -- %(message)s",
                                 level=numeric_level, datefmt='%Y%d%m %H:%M:%S', stream=sys.stdout)
     else:
-        print(f"Logging to {self.opt['lPath']})")
+        print(f"Logging to {self.opt['logPath']}")
         logging.basicConfig(format="[[[%(levelname)-9s] [%(asctime)s] -- %(message)s",  level=numeric_level,
-                                datefmt='%Y%m%d %H:%M:%S', filename=self.opt["lPath"])
+                                datefmt='%Y%m%d %H:%M:%S', filename=self.opt["logPath"])
                                                                                   
     
   def createLogArguments(self):
@@ -167,7 +167,8 @@ class ConfigMaster:
     namedargs = {
       "choices": ["VERBOSE","DEBUG","INFO","WARNING","ERROR","CRITICAL"],
       "help": "Control volume of log messages. (default: %(default)s)",
-      "default": "INFO"
+      "default": "INFO",
+      "type": str.upper
       }
     arglist.append( (posargs, namedargs) )
 

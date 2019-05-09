@@ -5,6 +5,7 @@ A simple script to show how ConfigMaster works with Logging integration.
 from ConfigMaster import ConfigMaster
 
 import logging
+logging.captureWarnings(True)
 
 
 def main():
@@ -18,8 +19,10 @@ def main():
     
     logging.info("info test")
     logging.debug("debug test")
-    logging.warn("warn test")
 
+    # using deprecated .warn instead of .warning
+    # to illustrate utility of logging.captureWarnings()
+    logging.warn("warn test")
 
 defaultParams = """
 import os
@@ -35,11 +38,11 @@ else:
   forecastHour = 3
 
 # Email Address
-emailAddy = "prestop@ucar.edu"
+emailAddress = "prestop@ucar.edu"
 
 dataDir = os.path.join(os.environ["HOME"],"data")
 
-logFile = os.path.join(dataDir,"logs",datetime.datetime.now().strftime("%Y%m%d") + ".log")
+outFile = os.path.join(dataDir,"output",datetime.datetime.now().strftime("%Y%m%d") + ".out")
  
 """
 
