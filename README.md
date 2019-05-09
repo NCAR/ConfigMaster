@@ -86,7 +86,7 @@ else:
   forecastHour = 3
 
 # Email Address
-emailAddy = "prestop@ucar.edu"
+emailAddress = "prestop@ucar.edu"
 
 dataDir = os.path.join(os.environ["HOME"],"data")
 
