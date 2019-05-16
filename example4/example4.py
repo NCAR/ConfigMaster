@@ -24,6 +24,8 @@ def main():
     # to illustrate utility of logging.captureWarnings()
     logging.warn("warn test")
 
+    print(f"You access the configuration using p.opt['key'].  e.g. emailAddress: {p.opt['emailAddress']}")
+
 defaultParams = """
 import os
 import datetime
