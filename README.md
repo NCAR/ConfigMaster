@@ -53,7 +53,7 @@ This example uses configuration defintion in the script and has the integrated l
 ### Output
 Here is what the usage statement looks like:
 ```
-$ ./example4/example4.py -h
+$ ./example4.py -h
 usage: example4.py [-h] [-c CONFIG] [-p]
                    [-d {VERBOSE,DEBUG,INFO,WARNING,ERROR,CRITICAL}]
                    [-l LOGPATH] [--forecastHour FORECASTHOUR]
@@ -77,25 +77,26 @@ optional arguments:
   --emailAddress EMAILADDRESS
                         Overide the param file value of emailAddress
   --dataDir DATADIR     Overide the param file value of dataDir
-  --outFile OUTFILE     Overide the param file value of outFile
+  --outFile OUTFILE     Overide the param file value of outFile$ ./example4/example4.py -h
 ```
 
 Here is what example4 looks like when run:
 ```
-$ ./example4/example4.py
+$ ./example4.py
 Logging to stdout
-[INFO    ] [20190905 14:30:15] -- Using these parameters:
-[INFO    ] [20190905 14:30:15] -- 	forecastHour : 4
-[INFO    ] [20190905 14:30:15] -- 	emailAddress : prestop@ucar.edu
-[INFO    ] [20190905 14:30:15] -- 	dataDir : /home/prestop/data
-[INFO    ] [20190905 14:30:15] -- 	outFile : /home/prestop/data/output/20190509.out
-[INFO    ] [20190905 14:30:15] -- 	debugLevel : INFO
-[INFO    ] [20190905 14:30:15] -- 	logPath : -
-[INFO    ] [20190905 14:30:15] -- info test
-[WARNING ] [20190905 14:30:15] -- ./example4.py:25: DeprecationWarning: The 'warn' function is deprecated, use 'warning' instead
+[INFO    ] [20191605 09:26:29] -- Using these parameters:
+[INFO    ] [20191605 09:26:29] --       forecastHour : 3
+[INFO    ] [20191605 09:26:29] --       emailAddress : prestop@ucar.edu
+[INFO    ] [20191605 09:26:29] --       dataDir : /home/prestop/data
+[INFO    ] [20191605 09:26:29] --       outFile : /home/prestop/data/output/20190516.out
+[INFO    ] [20191605 09:26:29] --       debugLevel : INFO
+[INFO    ] [20191605 09:26:29] --       logPath : -
+[INFO    ] [20191605 09:26:29] -- info test
+[WARNING ] [20191605 09:26:29] -- ./example4.py:25: DeprecationWarning: The 'warn' function is deprecated, use 'warning' instead
   logging.warn("warn test")
 
-[WARNING ] [20190905 14:30:15] -- warn test
+[WARNING ] [20191605 09:26:29] -- warn test
+You access the configuration using p.opt['key'].  e.g. emailAddress: prestop@ucar.edu
 ```
 
 # Additional documentation
