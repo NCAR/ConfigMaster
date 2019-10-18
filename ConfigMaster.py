@@ -4,7 +4,6 @@ import os
 import sys
 import types
 import importlib
-import re
 
 import argparse
 
@@ -69,22 +68,8 @@ class ConfigMaster:
   def assignDefaultParams(self):
 #    global defaultParams
 #    self.defaultParams = dp
-
-    # replace all dunder keywords so they wont cause exec to fail
-    self.defaultParams = re.sub(r'__(.*)__', r'"SAVE__\1__TEMP"', self.defaultParams)
     exec(self.defaultParams, self.opt)
-
-    # change defaultParams back to original text for print_params
-    self.defaultParams = re.sub(r'"SAVE__(.*)__TEMP"', r'__\1__', self.defaultParams)
-
     del self.opt['__builtins__']
-
-    # replace variables in opt back to original text but skip imports
-    for v in self.opt:
-      if not isinstance(self.opt[v],type):
-        if re.match(r'SAVE__(.*)__TEMP', self.opt[v]):
-            self.opt[v] = re.sub(r'SAVE__(.*)__TEMP', r'__\1__', self.opt[v])
-
     for ko in list(self.opt.keys()):
       if type(self.opt[ko]) == types.ModuleType:
         del self.opt[ko]    
