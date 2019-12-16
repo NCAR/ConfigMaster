@@ -4,21 +4,6 @@ A simple script to show how ConfigMaster works.
 '''
 from ConfigMaster import ConfigMaster
 
-
-
-def main():
-    p = ConfigMaster()
-    p.setDefaultParams(defaultParams)
-    p.init(__doc__, add_default_logging=False)
-    
-    print("Using these parameters")
-    p.printParams()
-
-    if p.opt["debug"]:
-        print("\nDEBUG: Using forecast hour: {}".format(p.opt["forecastHour"]))
-
-
-
 defaultParams = """
 import os
 import datetime
@@ -44,6 +29,22 @@ dataDir = os.path.join(os.environ["HOME"],"data")
 logFile = os.path.join(dataDir,"logs",datetime.datetime.now().strftime("%Y%m%d") + ".log")
  
 """
+
+
+
+
+def main():
+    p = ConfigMaster()
+    p.setDefaultParams(defaultParams)
+    p.init(__doc__, add_default_logging=False)
+    
+    print("Using these parameters")
+    p.printParams()
+
+    if p["debug"]:
+        print(f"\nDEBUG: Using forecast hour: {p['forecastHour']}")
+
+
 
 
 if __name__ == "__main__":

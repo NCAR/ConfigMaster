@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# This program uses an external file for the default params
+
 import example2_pdef as P
 
 def main():

@@ -7,24 +7,7 @@ from ConfigMaster import ConfigMaster
 import logging
 logging.captureWarnings(True)
 
-
-def main():
-    p = ConfigMaster()
-    p.setDefaultParams(defaultParams)
-    p.init(__doc__, add_default_logging=True)
-
-    logging.info(f"Using these parameters:")
-    for line in p.getParamsString().splitlines():
-        logging.info(f"\t{line}")
-    
-    logging.info("info test")
-    logging.debug("debug test")
-
-    # using deprecated .warn instead of .warning
-    # to illustrate utility of logging.captureWarnings()
-    logging.warn("warn test")
-
-    print(f"You access the configuration using p.opt['key'].  e.g. emailAddress: {p.opt['emailAddress']}")
+import os
 
 defaultParams = """
 import os
@@ -48,6 +31,34 @@ outFile = os.path.join(dataDir,"output",datetime.datetime.now().strftime("%Y%m%d
  
 """
 
+
+# It can be useful to give your ConfigMaster instance global scope
+p = ConfigMaster()
+p.setDefaultParams(defaultParams)
+p.init(__doc__, add_default_logging=True)
+
+def main():
+
+    logging.info(f"Using these parameters:")
+    for line in p.getParamsString().splitlines():
+        logging.info(f"\t{line}")
+    
+    logging.info("info test")
+    logging.debug("debug test")
+
+    # using deprecated .warn instead of .warning
+    # to illustrate utility of logging.captureWarnings()
+    logging.warn("warn test")
+
+    print(f"EXAMPLE - You access the configuration using p['key'].  e.g. emailAddress: {p['emailAddress']}")
+
+    # you can also use your ConfigMaster object to store other derived configuration values
+    # I recommend using an '_' prefix to differentiate these added values
+    p["_newDir"] = os.path.join(p["dataDir"], "new")
+    print(f"\nPassing around this other value: {p['_newDir']}")
+    
+
+    
 
 if __name__ == "__main__":
     main()
