@@ -8,9 +8,12 @@ import importlib
 import argparse
 
 '''
-Version 1.2
+Version 1.3
+
 
 ChangeLog
+
+1.3 - Added index operator support
 1.2 - Added automatic logging support
 '''
 
@@ -256,7 +259,12 @@ class ConfigMaster:
         self.parser.add_argument(argument, help=helpString)
               
       
-        
+  def __getitem__(self, key):
+      return self.opt[key]
+
+  def __setitem__(self, key, value):
+      global opt
+      self.opt[key] = value
 			
 			
 			
