@@ -261,7 +261,7 @@ class ConfigMaster:
         argument = "--no-" + o
         action = "store_false"
         helpString = "Set " + o + " to False"
-        bool_parser.add_argument(argument, action=action, help=helpString, default=None)
+        bool_parser.add_argument(argument, action=action, help=helpString, default=None, dest=o)
       elif isinstance(self.opt[o], (int,float,str)):
         #print "working on {}".format(o)
         argument = "--" + o
