@@ -42,8 +42,10 @@ class ConfigMaster:
   defaultParams = ""
   #optionsToIgnore = ['dt', 'os']
   parser = None
-  
 
+  version = "1.0"
+  version_info = (1,0)
+  
   configFilePath = None
 
   def setDefaultParams(self, dp):
@@ -94,7 +96,15 @@ class ConfigMaster:
 
     #print "importing config file: {}".format(config_file)
     #cf = __import__(config_file, globals(), locals(), [])
-    cf = importlib.import_module(config_file)
+
+
+    #cf = importlib.import_module(config_file)
+
+    print(f"loading configuration from {cfp}")
+    spec = importlib.util.spec_from_file_location(config_file, cfp)
+    cf = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(cf)
+    #cf = importlib.import_module(config_file)
     for o in self.opt:
       #print "looking at {}".format(o)
       if o in dir(cf):
