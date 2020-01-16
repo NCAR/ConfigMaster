@@ -28,6 +28,8 @@ emailAddress = "prestop@ucar.edu"
 dataDir = os.path.join(os.environ["HOME"],"data")
 
 outFile = os.path.join(dataDir,"output",datetime.datetime.now().strftime("%Y%m%d") + ".out")
+
+test = True
  
 """
 
@@ -35,7 +37,7 @@ outFile = os.path.join(dataDir,"output",datetime.datetime.now().strftime("%Y%m%d
 # It can be useful to give your ConfigMaster instance global scope
 p = ConfigMaster()
 p.setDefaultParams(defaultParams)
-p.init(__doc__, add_default_logging=True)
+p.init(__doc__, add_default_logging=True, allow_extra_parameters=True)
 
 def main():
 

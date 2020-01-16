@@ -47,7 +47,8 @@ class ConfigMaster:
   version_info = (1,0)
   
   configFilePath = None
-
+  allow_extra_parameters = False
+  
   def setDefaultParams(self, dp):
     if dp.lstrip()[0:2] == "#!":
       self.defaultParams = dp
@@ -120,11 +121,14 @@ class ConfigMaster:
       if type(cf.__dict__[cfo]) == types.ModuleType:
         continue
       if cfo not in self.opt:
-        print("\nERROR: Invalid parameter in configuration file {}: {}\n".format(cfp,cfo))
-        exit(1)
-    
+        if self.allow_extra_parameters:
+            print("WARNING: Extra parameter in configuration file {}: {}\n".format(cfp,cfo))
+        else:
+            print("\nERROR: Invalid parameter in configuration file {}: {}\n".format(cfp,cfo))
+            exit(1)
 
-  def init(self, program_description=None, add_param_args=True, add_default_logging=True, additional_args=[]):
+
+  def init(self, program_description=None, add_param_args=True, add_default_logging=True, additional_args=[], allow_extra_parameters=None):
     '''
     Parse command line arguments, and initialize parameter dictionary.
 
@@ -132,6 +136,9 @@ class ConfigMaster:
     :param bool add_param_args: Automatically add command line arguments for configuration parameters
     :param dict additional_args: A collection of dictionaries.  Look at createLogArguments() for an example of its structure.
     '''
+    if allow_extra_parameters != None:
+        self.allow_extra_parameters = allow_extra_parameters
+    
     self.assignDefaultParams()
 
     self.parser = argparse.ArgumentParser(description=program_description, formatter_class=argparse.RawDescriptionHelpFormatter)
