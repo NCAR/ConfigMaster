@@ -3,7 +3,7 @@
 import os
 import sys
 import types
-import importlib
+import importlib.util
 
 import argparse
 
