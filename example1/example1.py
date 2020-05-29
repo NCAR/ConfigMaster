@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 '''
 A simple script to show how ConfigMaster works.
 '''
@@ -21,12 +22,12 @@ emailAddy = "prestop@ucar.edu"
  
 """
 
-
-
 def main():
     p = ConfigMaster()
     p.setDefaultParams(defaultParams)
     p.init(__doc__, add_default_logging=False)
+
+    print(f"Using ConfigMaster version {p.version}")
     
     print("Using these parameters")
     p.printParams()

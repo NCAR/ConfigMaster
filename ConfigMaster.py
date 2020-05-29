@@ -8,11 +8,11 @@ import importlib.util
 import argparse
 
 '''
-Version 1.3
+Version 1.4
 
 
 ChangeLog
-
+1.4 - Fixed type being set incorrectly when using cmd line options, added simple init. 
 1.3 - Added index operator support
 1.2 - Added automatic logging support
 '''
@@ -43,11 +43,25 @@ class ConfigMaster:
   #optionsToIgnore = ['dt', 'os']
   parser = None
 
-  version = "1.0"
-  version_info = (1,0)
+  version = "1.4"
+  version_info = (1,4)
   
   configFilePath = None
   allow_extra_parameters = False
+
+
+  # Instead of this:
+  # p = ConfigMaster()
+  # p.setDefaultParams(defaultParams)
+  # p.init(__doc__, add_default_logging=True, allow_extra_parameters=True)
+
+  # waant to just do this
+  # p = ConfigMaster(defaultParams, __doc__, add_default_logging=True, allow_extra_parameters=True)
+  # parameterized constructor 
+  def __init__(self, defaultParams, docString, **kwargs):
+      self.setDefaultParams(defaultParams)
+      self.init(docString, **kwargs)
+      
   
   def setDefaultParams(self, dp):
     if dp.lstrip()[0:2] == "#!":

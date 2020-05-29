@@ -5,7 +5,6 @@ A simple script to show how ConfigMaster works with Logging integration.
 from ConfigMaster import ConfigMaster
 
 import logging
-logging.captureWarnings(True)
 
 import os
 
@@ -30,14 +29,12 @@ dataDir = os.path.join(os.environ["HOME"],"data")
 outFile = os.path.join(dataDir,"output",datetime.datetime.now().strftime("%Y%m%d") + ".out")
 
 test = True
- 
 """
 
 
-# It can be useful to give your ConfigMaster instance global scope
-p = ConfigMaster()
-p.setDefaultParams(defaultParams)
-p.init(__doc__, add_default_logging=True, allow_extra_parameters=True)
+# It can be convenient to give your ConfigMaster instance global scope
+p = ConfigMaster(defaultParams, __doc__, add_default_logging=True, allow_extra_parameters=True)
+print(f"Using ConfigMaster version {p.version}")
 
 def main():
 
@@ -48,11 +45,9 @@ def main():
     logging.info("info test")
     logging.debug("debug test")
 
-    # using deprecated .warn instead of .warning
-    # to illustrate utility of logging.captureWarnings()
-    logging.warn("warn test")
+    logging.warning("warning test")
 
-    print(f"EXAMPLE - You access the configuration using p['key'].  e.g. emailAddress: {p['emailAddress']}")
+    print(f"\nEXAMPLE - You access the configuration using p['key'].  e.g. emailAddress: {p['emailAddress']}")
 
     # you can also use your ConfigMaster object to store other derived configuration values
     # I recommend using an '_' prefix to differentiate these added values
