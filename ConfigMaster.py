@@ -273,7 +273,7 @@ class ConfigMaster:
         #print "working on {}".format(o)
         argument = "--" + o
         helpString = "Overide the param file value of " + o
-        self.parser.add_argument(argument, help=helpString)
+        self.parser.add_argument(argument, help=helpString, type=type(self.opt[o]))
               
       
   def __getitem__(self, key):
