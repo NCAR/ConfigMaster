@@ -50,17 +50,27 @@ class ConfigMaster:
   allow_extra_parameters = False
 
 
+  # dumb default constructor does nothing.
+  # TODO - should the assignments above be in a constructor?
+
+  
   # Instead of this:
   # p = ConfigMaster()
   # p.setDefaultParams(defaultParams)
   # p.init(__doc__, add_default_logging=True, allow_extra_parameters=True)
 
+  
   # waant to just do this
   # p = ConfigMaster(defaultParams, __doc__, add_default_logging=True, allow_extra_parameters=True)
   # parameterized constructor 
-  def __init__(self, defaultParams, docString, **kwargs):
-      self.setDefaultParams(defaultParams)
-      self.init(docString, **kwargs)
+  def __init__(self, defaultParams=None, docString=None, **kwargs):
+
+      # to be backwards compatible, we support the old method of setting up ConfigMaster with 3 different calls
+      if defaultParams != None:
+          self.setDefaultParams(defaultParams)
+
+      if docString != None:
+          self.init(docString, **kwargs)
       
   
   def setDefaultParams(self, dp):
