@@ -5,6 +5,7 @@ Here is an example of the simplest usage:
 ```
 defaultParams = """
   forecastHour = 4
+  dataDir = "/dir"
   outFile = os.path.join(dataDir,"output",datetime.datetime.now().strftime("%Y%m%d") + ".out")
 """
 p = ConfigMaster(defaultParams, __doc__, add_default_logging=True)
