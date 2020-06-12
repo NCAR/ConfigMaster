@@ -1,23 +1,34 @@
 # ConfigMaster
-A light-weight tool for python configuration which provides automatic generation of parameter files, default parameter values, automatic command line overrides, and more. The design was influenced by TDRP (Table-Driven Runtime Parameters).
+A light-weight tool for python configuration which provides reading and automatic generation of parameter files, default parameter values, automatic command line overrides, consistent logging to a file or stdout, (including debug level control from the command line) and more.
 
+Here is an example of the simplest usage:
+```
+defaultParams = """
+  forecastHour = 4
+  outFile = os.path.join(dataDir,"output",datetime.datetime.now().strftime("%Y%m%d") + ".out")
+"""
+p = ConfigMaster(defaultParams, __doc__, add_default_logging=True)
+
+def main():  
+    logging.debug(f"forecastHour = {p['forecastHour']}")
+```
 
 ConfigMaster provides:
 
 * Ability to easily generate a default parameter file (i.e --print_params capability).  The documentation included in the file helps the new user to understand the use of the program and customize the parameters.
-* Encapsulation of parameter handling logic  (contained in the ConfigMaster class)
-* Simple default behavior. If no parameter file is used, the default parameter values are used.
-  * Overriding of missing parameters with default values.
-* Warning if you give a parameter in your config file that it doesn't expect.
-* Automatic command line override for configuration parameters.
+* Automatic support for logging (log file or stdout), and debug levels.
+* Simple default behavior. If no parameter file is used (or some parameters are missing), the default parameter values are used.
+* Warning if you give a parameter in your config file that it doesn't expect (can be turned off).
+* Automatically generate command line overrides for configuration parameters.
   * Only for int, long, float, string, and bool types currently
+* Automatic generation of usage statements.
 * Self-documenting. All parameter documentation is done in the paramdef, therefore the documentation and code are co-located, making it easy to keep the documentation up-to-date.
 * Support for environment variables in the parameter files.
   * Other python code can also be included in the param files - date/time logic, file system logic, etc.
 * Separation of parameter definition from script logic (i.e. tdrp's paramdef file).
   * A separate paramdef file is optional (constrast examples 1 & 2 below)).
-* Automatic support for logging (log file or stdout), and debug levels.
-* Simple.  Minimal coding required. Most work is done in the the paramdef file.
+* Encapsulation of parameter handling logic  (contained in the ConfigMaster class)
+* Simple.  Requires one line of code (not counting the import).
 
 
 # Installation
