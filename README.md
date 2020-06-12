@@ -1,5 +1,5 @@
 # ConfigMaster
-A light-weight tool for python configuration which provides reading and automatic generation of parameter files, default parameter values, automatic command line overrides, consistent logging to a file or stdout, (including debug level control from the command line) and more.
+A light-weight tool for python which handles configuration, command line options, and logging in a easy to use package (requires only one line of code).
 
 Here is an example of the simplest usage:
 ```
@@ -13,7 +13,7 @@ def main():
     logging.debug(f"forecastHour = {p['forecastHour']}")
 ```
 
-ConfigMaster provides:
+ConfigMaster provides reading and automatic generation of parameter files, default parameter values, automatic command line overrides, consistent logging to a file or stdout, (including debug level control from the command line) and more:
 
 * Ability to easily generate a default parameter file (i.e --print_params capability).  The documentation included in the file helps the new user to understand the use of the program and customize the parameters.
 * Automatic support for logging (log file or stdout), and debug levels.
