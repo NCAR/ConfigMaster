@@ -116,7 +116,10 @@ class ConfigMaster:
             dp = f"import collections\n{self.config_override_dict_name} = collections.defaultdict(lambda: collections.defaultdict(lambda: collections.defaultdict(list)))\n" + dp
         exec(dp, self.opt)
         del self.opt['__builtins__']
-        for ko in list(self.opt.keys()):
+
+        # make a copy of the keys because we are going to be deleting as we iterate
+        ko_keys = list(self.opt.keys())
+        for ko in ko_keys:
             if type(self.opt[ko]) == types.ModuleType:
                 del self.opt[ko]
 
@@ -140,24 +143,56 @@ class ConfigMaster:
         # cf = importlib.import_module(config_file)
 
         print(f"loading configuration from {cfp}")
-        spec = importlib.util.spec_from_file_location(config_file, cfp)
-        cf = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(cf)
+        with open(cfp, 'r') as my_conf_file:
+            conf_string = my_conf_file.read()
+        #print(f"conf_str = {conf_string}")
+        #spec = importlib.util.spec_from_file_location(config_file, cfp)
+        #cf = importlib.util.module_from_spec(spec)
+        #spec.loader.exec_module(cf)
+        cf = {}
+        if self.allow_config_override:
+            conf_string = f"import collections\n{self.config_override_dict_name} = collections.defaultdict(lambda: collections.defaultdict(lambda: collections.defaultdict(list)))\n" + conf_string
+
+        #self.debug(f"about to exec:\n {conf_string}\n\n")
+        exec(conf_string, cf)
+
+        del cf['__builtins__']
+        #for cfk in list(cf.keys()):
+        #    if type(cf[cfk]) == types.ModuleType:
+        #        del cf[cfk]
+
         # cf = importlib.import_module(config_file)
         for o in self.opt:
-            # print "looking at {}".format(o)
-            if o in dir(cf):
-                # print "found in cf: setting to {}".format(getattr(cf,o))
-                self.opt[o] = getattr(cf, o)
+            #self.debug(f"looking at {o}")
+            #if o == self.config_override_dict_name:
+            #    continue
+            #if o in dir(cf):
+            #    self.debug(f"found in cf: setting to {getattr(cf, o)}")
+            #    self.opt[o] = getattr(cf, o)
+            if o in cf:
+                self.debug(f"found {o} in config file\n\toverriding to {cf[o]}")
+                self.opt[o] = cf[o]
 
-        dcf = dir(cf)
-        for cfo in dcf:
+        #dcf = dir(cf)
+        #self.debug(f"cf = {cf}")
+        #self.debug(f"dcf = {dcf}")
+
+        # make a copy of the keys because we are going to be deleting them.
+        #cf_keys = list(cf.keys())
+
+        #print (cf)
+        for cfo in cf:
+            #self.debug(f"cfo = {cfo}  type={type(cfo)}")
             # cfo = dcf[kcfo]
             # print cfo,type(cf.__dict__[cfo])
             if cfo.startswith("__"):  #
                 continue
-            if type(cf.__dict__[cfo]) == types.ModuleType:
+            #if type(cf.__dict__[cfo]) == types.ModuleType:
+            #    continue
+            if type(cf[cfo]) == types.ModuleType:
                 continue
+            #print(f"{cfo} = {type(cfo)}")
+            #print(f"{cf[cfo]} = {type(cf[cfo])}")
             if cfo not in self.opt:
                 if self.allow_extra_parameters:
                     print("WARNING: Extra parameter in configuration file {}: {}\n".format(cfp, cfo))
@@ -166,21 +201,28 @@ class ConfigMaster:
                     exit(1)
 
     def init(self, program_description=None, add_param_args=True, add_default_logging=True, additional_args=None,
-             allow_extra_parameters=None):
+             allow_extra_parameters=None, doDebug=False):
         """
         Parse command line arguments, and initialize parameter dictionary.
 
+        :param doDebug: Turn on ConfigMaster debugging
         :param add_default_logging: This can be used to turn on/off the --debugString and --logPath options
         :param allow_extra_parameters: If this is true, then ConfigMaster will merely warn and not exit if an extra parameter is found in the config file.
         :param str program_description: Short description of the program function. __doc__ is a recommended value.
         :param bool add_param_args: Automatically add command line arguments for configuration parameters
         :param dict additional_args: A collection of dictionaries.  Look at createLogArguments() for an example of its structure.
         """
+        self.doDebug = doDebug
+
         if allow_extra_parameters is not None:
             self.allow_extra_parameters = allow_extra_parameters
 
+        #print("initial params")
+        #self.printParams()
         self.assignDefaultParams()
 
+        #print("after default assigned")
+        #self.printParams()
         self.parser = argparse.ArgumentParser(description=program_description,
                                               formatter_class=argparse.RawDescriptionHelpFormatter)
 
@@ -190,9 +232,16 @@ class ConfigMaster:
 
         # parse the cmd line and add to opt dictionary
         self.handleArgParse()
+        #print("after arg parse")
+        #self.printParams()
+
 
         if self.allow_config_override:
             self.doConfigOverride()
+
+        #print("after config override")
+        #self.printParams()
+
 
         # print(self.opt)
         if add_default_logging:
@@ -205,9 +254,10 @@ class ConfigMaster:
                 # self.debug(f"If user sets {param1} to {param1_target}")
                 for param2 in self.opt[self.config_override_dict_name][param1][param1_target]:
                     param2_target = self.opt[self.config_override_dict_name][param1][param1_target][param2]
-                    self.debug(f"If user sets {param1} to {param1_target}, then {param2} gets set to {param2_target}")
+                    #self.debug(f"If user sets {param1} to {param1_target}, then {param2} gets set to {param2_target}")
                     if self.opt[param1] == param1_target:
                         self.opt[param2] = param2_target
+                        self.debug(f"overriding {param2} with {param2_target} ({self.config_override_dict_name})")
 
     def createDefaultLogger(self):
 
