@@ -46,7 +46,7 @@ ConfigMaster provides reading and automatic generation of parameter files, defau
 
 When you clone the repository, you will also get several subdirectories named example1 to example{N}.  
 
-Example 4 is the latest, and most useful example.  Since it is still relatively simple, and will fit most users needs, I recomend you start there.
+Examples 4 and 5 are the latest, and most useful examples.  Since they are still relatively simple, and will fit most users needs, I recommend you start there.
 
 ## Example 1
 A simple example with logging support turned off.
@@ -110,6 +110,31 @@ Logging to stdout
 [WARNING ] [20191605 09:26:29] -- warn test
 You access the configuration using p.opt['key'].  e.g. emailAddress: prestop@ucar.edu
 ```
+
+## Example 5
+Example 5 shows how to override additional options based on cmd line parameters.  Normally 
+the config file is parsed first, then the command line, so if you have this configuration:
+```
+model = "GFS3" # GFS4 also ok.
+filesize = 1e+6
+
+if model == "GFS3":
+  filesize = 1e+6
+else if model == "GFS4":
+  filesize = 5e+6
+```
+and you pass --model GFS4, it will not set filesize based on your new model.
+
+Instead you do it like this:
+```
+model = "GFS3" # GFS4 also ok.
+filesize = 1e+6
+
+_config_override["model"]["GFS4"]["filesize"] = 5e+6
+```
+
+[Example5.py Source](https://raw.githubusercontent.com/NCAR/ConfigMaster/master/example5/example5.py)
+
 
 # Additional documentation
 Documentation on the UCAR wiki goes into more detail for examples one, two, and three.
