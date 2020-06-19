@@ -6,12 +6,14 @@ import types
 import importlib.util
 
 import argparse
+import collections
 
 '''
-Version 1.4
+Version 1.5
 
 
 ChangeLog
+1.5 - Added _config_override support
 1.4 - Fixed type being set incorrectly when using cmd line options, added simple init. 
 1.3 - Added index operator support
 1.2 - Added automatic logging support
@@ -43,12 +45,16 @@ class ConfigMaster:
   #optionsToIgnore = ['dt', 'os']
   parser = None
 
-  version = "1.4"
-  version_info = (1,4)
-  
+  version_info = (1,5)
+  version = ".".join(map(str,version_info))
+
   configFilePath = None
   allow_extra_parameters = False
 
+  allow_config_override = True
+  config_override_dict_name = "_config_override"
+
+  doDebug = False
 
   # dumb default constructor does nothing.
   # TODO - should the assignments above be in a constructor?
@@ -71,7 +77,10 @@ class ConfigMaster:
 
       if docString != None:
           self.init(docString, **kwargs)
-      
+
+  def debug(self, s):
+    if self.doDebug:
+      print(s)
   
   def setDefaultParams(self, dp):
     if dp.lstrip()[0:2] == "#!":
@@ -85,7 +94,8 @@ class ConfigMaster:
   def getParamsString(self):
     returnString=""
     for o in self.opt:
-      returnString += (o + " : " + str(self.opt[o]) + "\n")
+      if self.allow_config_override and not self.config_override_dict_name == o:
+        returnString += (o + " : " + str(self.opt[o]) + "\n")
     return returnString
         
   def assignParameters(self,p):
@@ -98,7 +108,11 @@ class ConfigMaster:
   def assignDefaultParams(self):
 #    global defaultParams
 #    self.defaultParams = dp
-    exec(self.defaultParams, self.opt)
+  #  self.opt["_config_override"] = collections.defaultdict(lambda: collections.defaultdict(lambda: collections.defaultdict(list)))
+    dp = self.defaultParams
+    if self.allow_config_override:
+      dp = f"import collections\n{self.config_override_dict_name} = collections.defaultdict(lambda: collections.defaultdict(lambda: collections.defaultdict(list)))\n"+dp
+    exec(dp, self.opt)
     del self.opt['__builtins__']
     for ko in list(self.opt.keys()):
       if type(self.opt[ko]) == types.ModuleType:
@@ -174,9 +188,23 @@ class ConfigMaster:
     # parse the cmd line and add to opt dictionary
     self.handleArgParse()
 
+    if self.allow_config_override:
+      self.doConfigOverride()
+
     #print(self.opt)
     if add_default_logging:
       self.createDefaultLogger()
+
+  def doConfigOverride(self):
+    for param1 in self.opt[self.config_override_dict_name]:
+      #self.debug(f"Using {param} for overriding")
+      for param1_target in self.opt[self.config_override_dict_name][param1]:
+        #self.debug(f"If user sets {param1} to {param1_target}")
+        for param2 in self.opt[self.config_override_dict_name][param1][param1_target]:
+          param2_target = self.opt[self.config_override_dict_name][param1][param1_target][param2]
+          self.debug(f"If user sets {param1} to {param1_target}, then {param2} gets set to {param2_target}")
+          if self.opt[param1] == param1_target:
+            self.opt[param2] = param2_target
 
   def createDefaultLogger(self):
 
