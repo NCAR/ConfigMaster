@@ -49,6 +49,9 @@ class ConfigMaster:
     # optionsToIgnore = ['dt', 'os']
     parser = None
 
+    # this hangs on to a reference of the cmd line args for us.
+    args = None
+
     version_info = (1, 5)
     version = ".".join(map(str, version_info))
 
@@ -73,6 +76,7 @@ class ConfigMaster:
     # parameterized constructor
     def __init__(self, defaultParams=None, docString=None, **kwargs):
 
+        # print(kwargs)
         # to be backwards compatible, we support the old method of setting up ConfigMaster with 3 different calls
         if defaultParams != None:
             self.setDefaultParams(defaultParams)
@@ -81,6 +85,7 @@ class ConfigMaster:
             self.init(docString, **kwargs)
 
     def debug(self, s):
+        #print(f"dd = {self.doDebug}")
         if self.doDebug:
             print(s)
 
@@ -196,6 +201,7 @@ class ConfigMaster:
             if cfo not in self.opt:
                 if self.allow_extra_parameters:
                     print("WARNING: Extra parameter in configuration file {}: {}\n".format(cfp, cfo))
+                    self.opt[cfo] = cf[cfo]
                 else:
                     print("\nERROR: Invalid parameter in configuration file {}: {}\n".format(cfp, cfo))
                     exit(1)
@@ -212,7 +218,9 @@ class ConfigMaster:
         :param bool add_param_args: Automatically add command line arguments for configuration parameters
         :param dict additional_args: A collection of dictionaries.  Look at createLogArguments() for an example of its structure.
         """
+        #print(f"dd = {doDebug}")
         self.doDebug = doDebug
+        #print(f"dd = {self.doDebug}")
 
         if allow_extra_parameters is not None:
             self.allow_extra_parameters = allow_extra_parameters
@@ -235,9 +243,10 @@ class ConfigMaster:
         #print("after arg parse")
         #self.printParams()
 
-
+        # print(f" aco = {self.allow_config_override}")
         if self.allow_config_override:
             self.doConfigOverride()
+            self.handleArgParse()
 
         #print("after config override")
         #self.printParams()
@@ -248,13 +257,15 @@ class ConfigMaster:
             self.createDefaultLogger()
 
     def doConfigOverride(self):
+        #print("t")
+        # self.debug("doConfigOverride")
         for param1 in self.opt[self.config_override_dict_name]:
-            # self.debug(f"Using {param} for overriding")
+            self.debug(f"Using {param1} for overriding")
             for param1_target in self.opt[self.config_override_dict_name][param1]:
-                # self.debug(f"If user sets {param1} to {param1_target}")
+                self.debug(f"If user sets {param1} to {param1_target}")
                 for param2 in self.opt[self.config_override_dict_name][param1][param1_target]:
                     param2_target = self.opt[self.config_override_dict_name][param1][param1_target][param2]
-                    #self.debug(f"If user sets {param1} to {param1_target}, then {param2} gets set to {param2_target}")
+                    self.debug(f"If user sets {param1} to {param1_target}, then {param2} gets set to {param2_target}")
                     if self.opt[param1] == param1_target:
                         self.opt[param2] = param2_target
                         self.debug(f"overriding {param2} with {param2_target} ({self.config_override_dict_name})")
@@ -314,7 +325,14 @@ class ConfigMaster:
             self.parser.add_argument(*posargs, **namedargs)
 
     def handleArgParse(self):
-        args = self.parser.parse_args()
+        """
+        This can be called multiple times to have the cmd line args ovveride other values, but it will only
+        actually parse the args (and therefore the config file) the first time it is called.
+        :return:
+        """
+        if self.args == None:
+            self.args = self.parser.parse_args()
+
 
         '''
         for o in self.opt:
@@ -327,10 +345,10 @@ class ConfigMaster:
         '''
         # print(f"{ vars(args).keys()}")
         # print(f"{ self.opt}")
-        for o in vars(args).keys():
-            if getattr(args, o) != None:
-                # print(f"seting {o} to {getattr(args,o)} from command line")
-                self.opt[o] = getattr(args, o)
+        for o in vars(self.args).keys():
+            if getattr(self.args, o) != None:
+                # print(f"seting {o} to {getattr(self.args,o)} from command line")
+                self.opt[o] = getattr(self.args, o)
 
     def addParseArgs(self, add_param_args=True, add_default_logging=True, additional_args=None):
         # parser.add_argument('-c','--config', help="The configuration file.")
