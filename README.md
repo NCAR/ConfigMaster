@@ -46,23 +46,19 @@ ConfigMaster provides reading and automatic generation of parameter files, defau
 
 When you clone the repository, you will also get several subdirectories named example1 to example{N}.  
 
-Examples 4 and 5 are the latest, and most useful examples.  Since they are still relatively simple, and will fit most users needs, I recommend you start there.
+Examples 4 is the  most useful examples. I recommend you start there.  Here is a short description of the other examples.
 
-## Example 1
-A simple example with logging support turned off.
+* **Example 1** - A simple example with logging support turned off.
+* **Example 2** - Similar to example 1, but shows you how to put your parameter definitions in a separate file, instead of within the script itself.  Logging support is off.
+* **Example 3** - Same as example 1, except it also uses environment variables, and logic in the param file.  Logging support is off.
 
-## Example 2
-Similar to example 1, but shows you how to put your parameter definitions in a separate file, instead of within the script itself.  Logging support is off.
-
-## Example 3
-Same as example 1, except it also uses environment variables, and logic in the param file.  Logging support is off.
-
-## Example 4
-This example uses configuration defintion in the script and has the integrated logging enabled.
+### Example 4
+* Defines the configuration file in the script
+* Integrated logging enabled.
 
 [Example4.py Source](https://raw.githubusercontent.com/NCAR/ConfigMaster/master/example4/example4.py)
 
-### Output
+#### Output
 Here is what the usage statement looks like:
 ```
 $ ./example4.py -h
@@ -111,31 +107,15 @@ Logging to stdout
 You access the configuration using p.opt['key'].  e.g. emailAddress: prestop@ucar.edu
 ```
 
-## Example 5
-Example 5 shows how to override additional options based on cmd line parameters.  Normally 
-the config file is parsed first, then the command line, so if you have this configuration:
-```
-model = "GFS3" # GFS4 also ok.
-filesize = 1e+6
-
-if model == "GFS3":
-  filesize = 1e+6
-else if model == "GFS4":
-  filesize = 5e+6
-```
-and you pass --model GFS4, it will not set filesize based on your new model.
-
-Instead you do it like this:
-```
-model = "GFS3" # GFS4 also ok.
-filesize = 1e+6
-
-_config_override["model"]["GFS4"]["filesize"] = 5e+6
-```
-
-[Example5.py Source](https://raw.githubusercontent.com/NCAR/ConfigMaster/master/example5/example5.py)
-
+# Order of Precedence
+1. Command line
+1. _config_override  (see [Advanced Documention - Configuration Override](README_advanced.md#Configuration Override))
+1. Config File 
+1. Default (Config Definition) Arguments
 
 # Additional documentation
+In an effort to keep this front page less cluttered advanced features and additional information has been moved to the  [Advanced Documention](README_advanced.md).
+ 
 Documentation on the UCAR wiki goes into more detail for examples one, two, and three.
 https://wiki.ucar.edu/display/ral/ConfigMaster.py
+
