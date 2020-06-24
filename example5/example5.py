@@ -28,7 +28,7 @@ _config_override["model"]["GFS5"]["forecast_hours"] = 48
 """
 
 # It can be convenient to give your ConfigMaster instance global scope
-p = ConfigMaster(defaultParams, __doc__, add_default_logging=True, allow_extra_parameters=True)
+p = ConfigMaster(defaultParams, __doc__, add_default_logging=True, allow_extra_parameters=True, doDebug=True)
 print(f"Using ConfigMaster version {p.version}")
 
 
