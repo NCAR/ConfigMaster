@@ -258,15 +258,17 @@ class ConfigMaster:
 
     def doConfigOverride(self):
         #print("t")
+        # _config_override["model"]["GFS5"]["min_expected_filesize"] = 160e+6  # 160M
+
         # self.debug("doConfigOverride")
         for param1 in self.opt[self.config_override_dict_name]:
             self.debug(f"Using {param1} for overriding")
             for param1_target in self.opt[self.config_override_dict_name][param1]:
-                self.debug(f"If user sets {param1} to {param1_target}")
+                self.debug(f"If user sets {param1} to {param1_target} on the cmd line")
                 for param2 in self.opt[self.config_override_dict_name][param1][param1_target]:
                     param2_target = self.opt[self.config_override_dict_name][param1][param1_target][param2]
-                    self.debug(f"If user sets {param1} to {param1_target}, then {param2} gets set to {param2_target}")
-                    if self.opt[param1] == param1_target:
+                    self.debug(f"If user sets {param1} to {param1_target} (on the cmd line), then {param2} gets set to {param2_target}")
+                    if getattr(self.args, param1) == param1_target:
                         self.opt[param2] = param2_target
                         self.debug(f"overriding {param2} with {param2_target} ({self.config_override_dict_name})")
 
