@@ -2,7 +2,7 @@
 A light-weight tool for python which handles configuration, command line options, and logging in a easy to use package (requires only one line of code).
 
 Here is an example of the simplest usage:
-```
+```python
 defaultParams = """
   forecastHour = 4
   dataDir = "/dir"
