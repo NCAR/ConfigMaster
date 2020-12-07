@@ -8,10 +8,11 @@ import importlib.util
 import argparse
 
 '''
-Version 1.5
+Version 1.6
 
 
 ChangeLog
+1.6 - Added handling for __file__
 1.5 - Added _config_override support
 1.4 - Fixed type being set incorrectly when using cmd line options, added simple init. 
 1.3 - Added index operator support
@@ -52,7 +53,7 @@ class ConfigMaster:
     # this hangs on to a reference of the cmd line args for us.
     args = None
 
-    version_info = (1, 5)
+    version_info = (1, 6)
     version = ".".join(map(str, version_info))
 
     configFilePath = None
