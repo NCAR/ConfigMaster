@@ -158,8 +158,15 @@ class ConfigMaster:
         if self.allow_config_override:
             conf_string = f"import collections\n{self.config_override_dict_name} = collections.defaultdict(lambda: collections.defaultdict(lambda: collections.defaultdict(list)))\n" + conf_string
 
+        # when I switched from importlib back to exec, __file__ stopped working, so swap by hand:
+        conf_string = conf_string.replace("__file__","'"+config_file+"'")
+
         #self.debug(f"about to exec:\n {conf_string}\n\n")
-        exec(conf_string, cf)
+        try:
+            exec(conf_string, cf)
+        except: 
+            print(f"FAIL: exec of conf_string:\n{conf_string}\n")
+            raise
 
         del cf['__builtins__']
         #for cfk in list(cf.keys()):
