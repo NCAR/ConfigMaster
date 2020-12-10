@@ -109,7 +109,7 @@ You access the configuration using p.opt['key'].  e.g. emailAddress: prestop@uca
 
 # Order of Precedence
 1. Command line
-1. _config_override  (see [Advanced Documention - Configuration Override](README_advanced.md#Configuration Override))
+1. _config_override  (see [Advanced Documention - Configuration Override](README_advanced.md#configuration-override) )
 1. Config File 
 1. Default (Config Definition) Arguments
 
