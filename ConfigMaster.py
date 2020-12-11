@@ -45,7 +45,7 @@ class ConfigMaster:
     """ This is the main dictionary that holds all the args """
     opt = {}
 
-    defaultParamsHeader = "#!/usr/bin/env python\n"
+    defaultParamsHeader = "#!/usr/bin/env python3\n"
     defaultParams = ""
     # optionsToIgnore = ['dt', 'os']
     parser = None
@@ -75,15 +75,15 @@ class ConfigMaster:
     # waant to just do this
     # p = ConfigMaster(defaultParams, __doc__, add_default_logging=True, allow_extra_parameters=True)
     # parameterized constructor
-    def __init__(self, defaultParams=None, docString=None, **kwargs):
+    def __init__(self, defaultParams=None, docString="", **kwargs):
 
         # print(kwargs)
         # to be backwards compatible, we support the old method of setting up ConfigMaster with 3 different calls
         if defaultParams != None:
             self.setDefaultParams(defaultParams)
+        
+        self.init(docString, **kwargs)
 
-        if docString != None:
-            self.init(docString, **kwargs)
 
     def debug(self, s):
         #print(f"dd = {self.doDebug}")
@@ -121,6 +121,8 @@ class ConfigMaster:
         if self.allow_config_override:
             dp = f"import collections\n{self.config_override_dict_name} = collections.defaultdict(lambda: collections.defaultdict(lambda: collections.defaultdict(list)))\n" + dp
         exec(dp, self.opt)
+        #print("opt ")
+        #print(self.opt)
         del self.opt['__builtins__']
 
         # make a copy of the keys because we are going to be deleting as we iterate
@@ -168,7 +170,7 @@ class ConfigMaster:
         except: 
             print(f"FAIL: exec of conf_string:\n{conf_string}\n")
             raise
-
+        
         del cf['__builtins__']
         #for cfk in list(cf.keys()):
         #    if type(cf[cfk]) == types.ModuleType:
