@@ -3,15 +3,55 @@ A light-weight tool for python which handles configuration, command line options
 
 Here is an example of the simplest usage:
 ```python
+#!/usr/bin/env python3
+'''
+Super simple example of ConfigMaster
+'''
+
+from ConfigMaster import ConfigMaster
+import logging
+
 defaultParams = """
-  forecastHour = 4
-  dataDir = "/dir"
-  outFile = os.path.join(dataDir,"output",datetime.datetime.now().strftime("%Y%m%d") + ".out")
+import os, datetime
+
+forecastHour = 4
+dataDir = "/dir"
+outFile = os.path.join(dataDir,"output",datetime.datetime.now().strftime("%Y%m%d") + ".out")
 """
+
 p = ConfigMaster(defaultParams, __doc__, add_default_logging=True)
 
-def main():  
-    logging.debug(f"forecastHour = {p['forecastHour']}")
+logging.info(f"forecastHour = {p['forecastHour']}")
+```
+
+```bash
+$ ./simple.py -h
+usage: simple.py [-h] [-c CONFIG] [-p]
+                 [-d {VERBOSE,DEBUG,INFO,WARNING,ERROR,CRITICAL}] [-l LOGPATH]
+                 [--forecastHour FORECASTHOUR] [--dataDir DATADIR]
+                 [--outFile OUTFILE]
+
+Super simple example of ConfigMaster
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c CONFIG, --config CONFIG
+                        The configuration file.
+  -p, --print_params    Generate a default configuration file.
+  -d {VERBOSE,DEBUG,INFO,WARNING,ERROR,CRITICAL}, --debugLevel {VERBOSE,DEBUG,INFO,WARNING,ERROR,CRITICAL}
+                        Control volume of log messages. (default: INFO)
+  -l LOGPATH, --logPath LOGPATH
+                        The full path to the log file. Use '-' to log to
+                        stdout. (default: -)
+  --forecastHour FORECASTHOUR
+                        Overide the param file value of forecastHour
+  --dataDir DATADIR     Overide the param file value of dataDir
+  --outFile OUTFILE     Overide the param file value of outFile
+
+
+$ ./simple.py 
+Logging to stdout
+[INFO    ] [20201112 13:27:46] -- forecastHour = 4
 ```
 
 ConfigMaster provides reading and automatic generation of parameter files, default parameter values, automatic command line overrides, consistent logging to a file or stdout, (including debug level control from the command line) and more:
