@@ -71,7 +71,6 @@ class ConfigMaster:
     # p = ConfigMaster()
     # p.setDefaultParams(defaultParams)
     # p.init(__doc__, add_default_logging=True, allow_extra_parameters=True)
-
     # waant to just do this
     # p = ConfigMaster(defaultParams, __doc__, add_default_logging=True, allow_extra_parameters=True)
     # parameterized constructor
@@ -81,8 +80,7 @@ class ConfigMaster:
         # to be backwards compatible, we support the old method of setting up ConfigMaster with 3 different calls
         if defaultParams != None:
             self.setDefaultParams(defaultParams)
-        
-        self.init(docString, **kwargs)
+            self.init(docString, **kwargs)
 
 
     def debug(self, s):
